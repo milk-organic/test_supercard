@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WWE SuperCard: Road to Glory</title>
+</head>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #333;
+        color: #fff;
+    }
+
+    h1 {
+        font-size: 2rem;
+        margin: 0;
+        padding: 1rem;
+        background-color: #9b3535;
+        color: #fff;
+    }
+
+    #tier-select {
+        line-height: 3;
+        margin: 0;
+        padding: 0;
+    }
+
+    select {
+        background-color: rgb(51, 51, 51);
+        color: rgb(227, 110, 110);
+    }
+
+    #shards-of-each-tier {
+        line-height: 1;
+    }
+
+    p {
+        font-size: 1rem;
+        line-height: 0;
+        margin: 0;
+        padding: 1rem;
+    }
+
+    .Description {
+        line-height: initial;
+        color: #ecb0b0;
+    }
+
+    span {
+        color: #e0e89a;
+        margin: 0 10px;
+    }
+
+    h2 {
+        margin: 1rem;
+    }
+
+    .span-labels {
+        color: #fff;
+        /* display: inline-block; */
+        padding-right: 10px;
+    }
+
+    button {
+        color: white;
+        background-color: #ecb0b0;
+        /* text-decoration: none; */
+        padding-right: 10px;
+    }
+
+</style>
+
+<body>
+    <header>
+        <h1 class="heading">WWE SuperCard: Road to Glory</h1>
+    </header>
+    
+    <main>
+        <section class="wrapper">
+            <div class="container">
+                <div class="content">
+                    <h2>Road to Glory Calculation</h2>
+                </div>
+                <div class="content">
+                    <p class="Description">Calculate the points required to complete the Road to Glory game mode.</p>
+                </div>
+                <div class="content">
+                    <label for="tier-select">Tier:</label>
+                    <select name="tier" id="tier-select">
+                        <option value="">--Please choose a tier--</option>
+                        <option value="20,RTWM">RTWM</option>
+                        <option value="30,WM38">WM38</option>
+                        <option value="70,Ronin">Ronin</option>
+                        <option value="120,SS BCE">SS BCE</option>
+                        <option value="145,Arcane">Arcane</option>
+                        <option value="170,Pixel">Pixel</option>
+                        <option value="190,Extinction">Extinction</option>
+                        <option value="215,Octane">Octane</option>
+                        <option value="235,RR23">RR23</option>
+                        <option value="275,RR23 SE">RR23 SE</option>
+                        <option value="25,RTWM (Heroic)">RTWM (Heroic)</option>
+                        <option value="35,WM38 (Heroic)">WM38 (Heroic)</option>
+                        <option value="75,Ronin (Heroic)">Ronin (Heroic)</option>
+                        <option value="125,SS BCE (Heroic)">SS BCE (Heroic)</option>
+                        <option value="155,Arcane (Heroic)">Arcane (Heroic)</option>
+                        <option value="180,Pixel (Heroic)">Pixel (Heroic)</option>
+                        <option value="200,Extinction (Heroic)">Extinction (Heroic)</option>
+                        <option value="230,Octane (Heroic)">Octane (Heroic)</option>
+                        <option value="250,RR23 (Heroic)">RR23 (Heroic)</option>
+                        <option value="290,RR23 SE (Heroic)">RR23 SE (Heroic)</option>
+                    </select>
+                    
+                </div>
+                <div id="content">
+                    <label for="current-points">Current points (0-290):</label>
+                    <input type="number" id="current-points" name="current-points" min="0" max="290">
+                </div>
+                <div id="content">
+                    <button id="calculate-button">Calculate</button>
+                </div>
+                <div class="content">
+                    <p id="p-label">Total points earned: <span id="total-points-earned"></span></p>
+                    <p id="p-label">Total points earned percentage: <span id="total-points-earned-percentage"></span></p>
+                    <p id="p-label">Remaining points: <span id="remaining-points"></span></p>
+                </div>
+                <div class="content">
+                    <p class="Description">Go to Heroic.</p>
+                </div>
+                <div class="content">
+                    <p id="p-label">Total points earned: <span id="total-points-earned-heroic"></span></p>
+                    <p id="p-label">Total points earned percentage: <span id="total-points-earned-percentage-heroic"></span></p>
+                    <p id="p-label">Remaining points: <span id="remaining-points-heroic"></span></p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+
+    <script>
+        function getPointsBelowTheTier(tier, pointsAndTierObject) {
+            let earnedPoints = 0;
+            for (let object of pointsAndTierObject) {
+                if (object[1]===tier) {
+                    return earnedPoints;
+                }
+                earnedPoints += parseInt(object[0]);
+            }
+            console.log(pointsAndTierObject);
+            return earnedPoints;
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const selectElement = document.getElementById('tier-select');
+            let totalPoints = 0;
+            let totalPointsHeroic = 0;
+            let pointsAndTierObject = [];
+            for (let option of selectElement.options) {
+                let optionObject = option.value.split(',');
+                // remove the value of '--Please choose a tier--' select.
+                if (optionObject.length > 1) {
+                    if (pointsAndTierObject.length < 10) {
+                        totalPoints += parseInt(optionObject[0]);
+                    }
+                    totalPointsHeroic += parseInt(optionObject[0]);
+                    pointsAndTierObject.push(optionObject);
+                }
+            }
+            console.log(totalPoints, totalPointsHeroic);
+            const currentPointsInput = document.getElementById('current-points');
+            const calculateButton = document.getElementById('calculate-button');
+            const totalPointsEarned = document.getElementById('total-points-earned');
+            const totalPointsEarnedPercentage = document.getElementById('total-points-earned-percentage');
+            const remainingPoints = document.getElementById('remaining-points');
+            const totalPointsEarnedHeroic = document.getElementById('total-points-earned-heroic');
+            const totalPointsEarnedPercentageHeroic = document.getElementById('total-points-earned-percentage-heroic');
+            const remainingPointsHeroic = document.getElementById('remaining-points-heroic');
+            let currentPoints = 0;
+            calculateButton.addEventListener('click', () => {
+                const selectedValue = selectElement.value.split(',');
+                if (selectedValue && selectedValue.length > 1) {
+                    let earnedPoints = getPointsBelowTheTier(selectedValue[1], pointsAndTierObject);
+                    // console.log(earnedPoints);
+                    currentPoints = currentPointsInput.value ? parseInt(currentPointsInput.value) : 0;
+                    // console.log(currentPoints);
+                    let pointsEarned = earnedPoints + currentPoints;
+                    let pointsPercentage = Math.floor((pointsEarned/totalPoints)*100)
+                    if (pointsPercentage > 100) {
+                        pointsPercentage = 100;
+                    }
+                    let pointsRemaining = totalPoints - pointsEarned;
+                    if (pointsRemaining < 0) {
+                        pointsRemaining = 0;
+                    }
+                    let pointsPercentageHeroic = Math.floor((pointsEarned/totalPointsHeroic)*100)
+                    if (pointsPercentage > 100) {
+                        pointsPercentage = 100;
+                    }
+                    let pointsRemainingHeroic = totalPointsHeroic - pointsEarned;
+                    if (pointsRemaining < 0) {
+                        pointsRemaining = 0;
+                    }
+                    totalPointsEarned.innerHTML = pointsEarned;
+                    totalPointsEarnedPercentage.innerHTML = pointsPercentage;
+                    remainingPoints.innerHTML = pointsRemaining;
+                    totalPointsEarnedHeroic.innerHTML = pointsEarned;
+                    totalPointsEarnedPercentageHeroic.innerHTML = pointsPercentageHeroic;
+                    remainingPointsHeroic.innerHTML = pointsRemainingHeroic;
+                };
+            });
+        });
+    </script>
+
+    <footer>
+        <!-- <h2>Welcome to Page 2</h2>
+        <p>Click the link below to go back to Index Page</p>
+        <ul>
+            <li><a href="index.html" class="link" id="link-button">Go back to Index Page</a></li>
+        </ul>   -->
+    </footer>
+</body>
+</html>
